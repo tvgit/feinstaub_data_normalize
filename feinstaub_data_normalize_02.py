@@ -42,8 +42,9 @@ Modifizieren geschieht in: >def normalize_and_save_data(...):< und heißt:
 import lib.x_CAParser as x_CAParser
 import lib.ppg_utils  as p_utils
 from   lib.ppg_log    import p_log_init, p_log_start, p_log_this, p_log_end
-
 import lib.x_glbls
+import lib.fstb_dta_to_db_mod as fstb_dta_to_db_mod
+
 import os
 
 import sqlite3
@@ -75,25 +76,16 @@ delta_t_mess = 150  # Normierte Zeitspanne zwischen zwei Messungen desselben Sen
 # db_in = r"\\RB3-WORK\lighttpd\feinstaub_0011_JSON.db"
 
 class mem():
-    # class that stores global vars
+    # class that stores global vars (not a real good idea: abuse of class construct:
+    #    mem acts as kind of container of global accessible variables ... )
     # INPUT database == db_in
 
-    # name of db with JSON data
-    db_JSON_fn = os.path.normpath(confargs.db_JSON_fn)
-    p_log_this(txt = 'db_JSON_fn: >' + db_JSON_fn + '<' )
+    # db_in  == path of db with JSON data        ... is initialised in >main()< !! ugly
+    db_in = ''
+    # db_out == path of db with normalised data  ... is initialised in >main()< !! ugly
+    db_out = ''
 
-    # dir where >db_JSON_fn< resides
-    db_JSON_dir = os.path.normpath(confargs.db_JSON_dir)
-    p_log_this(txt = 'db_JSON_dir: >' + db_JSON_dir + '<')
-
-    # full path of >db_JSON_fn<
-    db_JSON_path = os.path.normpath(os.path.join(db_JSON_dir, db_JSON_fn))
-    p_log_this(txt = 'db_JSON_path: >' + db_JSON_path + '<')
-
-    # db_in = r'C:\tmp\sqlite\feinstaub_0011.db'
-    db_in = db_JSON_path
-
-    # INPUT database tables: db_in_table_fstb, ....
+    # INPUT database tables in db_in: db_in_table_fstb, ....
     db_in_table_fstb = 'fstb'
     db_in_table_fstb_JSON = 'fstb_JSON'  # db_in !
 
@@ -104,9 +96,6 @@ class mem():
     #    (und nicht die Messwerte aller Sensoren). Dazu kommt eine weitere, eine Untertabelle, in der die
     #    Spezifika des dazugehörigen Sensors abgelegt sind: Messstation, Typ, Name ...
     # db_out = r'feinstaub_0011_NORM.db'
-
-    db_out = r'C:\tmp\sqlite\feinstaub_0011_NORM.db'
-    db_out = os.path.normpath(db_out)
 
     db_out_table_fstb             = 'fstb'       # in
     db_out_table_fstb_JSON        = 'fstb_JSON'  # out
@@ -750,7 +739,7 @@ def add_day_time_to_fstb_NORM(fstb_norm):
 
 
 def insert_distinct_day_stations(db_out, table_values = mem.db_out_table_values, table_day_station = mem.db_out_table_day_station):
-    # find all distinct days with their distinct station_name's in table: >table_values<
+    # find all distinct days with their distinct station_name-s in table: >table_values<
     sql = "SELECT DISTINCT date(datum), station_name FROM " + table_values + " ORDER BY datum, station_name ;"
     # print db_out, sql ;  p_log_this(sql)
     rslt_table = []
@@ -1088,18 +1077,39 @@ def insert_distinct_stations_sensors(db_out, table_values, stations_sensors = me
 
 
 def main():
-    # globale Variablen in class.mem
-    msge = 'Input:  db_in:  ' + mem.db_in
-    print msge;  p_log_this(msge)
-    msge = 'Output: db_out: ' + mem.db_out
-    print msge;  p_log_this(msge)
-
     p_log_this('begin')
     # eval_confargs()
 
-"""
+
+    # globale Variablen in class.mem
+    db_JSON_fn = os.path.normpath(confargs.db_JSON_fn)
+    db_JSON_dir = os.path.normpath(confargs.db_JSON_dir)
+    db_JSON_path = os.path.normpath(os.path.join(db_JSON_dir, db_JSON_fn))
+    # db_in = r'C:\tmp\sqlite\feinstaub_0011.db'
+    mem.db_in = db_JSON_path
+    msge = 'Input:  db_in:  ' + mem.db_in
+    print msge;  p_log_this(msge)
+
+    db_norm_fn = os.path.normpath(confargs.db_norm_fn)
+    db_norm_dir = os.path.normpath(confargs.db_norm_dir)
+    db_norm_path = os.path.normpath(os.path.join(db_norm_dir, db_norm_fn))
+    # db_out = r'C:\tmp\sqlite\feinstaub_0011_NORM.db'
+    mem.db_out = db_norm_path
+    msge = 'Output: db_out: ' + mem.db_out
+    print msge;  p_log_this(msge)
+
+    # dir which contains JSON files
+    feinstaub_dir = os.path.normpath(confargs.files_JSON_dir)
+    msge = 'feinstaub_dir: >' + feinstaub_dir + '<'
+    print msge;  p_log_this(msge)
+
+    # (make_new_db = True) => Alte Datenbank wird gelöscht und neue db frisch angelegt
+    fstb_dta_to_db_mod.make_sqlite_db(fn_db = db_JSON_path, make_new_db = True)
+    #fstb_dta_to_db_mod.make_sqlite_db(fn_db = db_JSON_path, make_new_db = False)
+    fstb_dta_to_db_mod.process_all_json_data_files(feinstaub_dir = feinstaub_dir, fn_db = db_JSON_path)
+
     make_new_db = True
-    make_new_db = False
+    # make_new_db = False
     if make_new_db:
         p_utils.p_file_delete(mem.db_out)
 
@@ -1110,7 +1120,7 @@ def main():
         db_out_make(db_out= mem.db_out)
         db_out_tables_create(db_out= mem.db_out)
 
-    # Normalisiere die Zeiten; speichere das Ergebnis in unterschiedlichem Format in unterschiedlichen Tabellen, 
+    # Normalisiere die Zeiten; speichere das Ergebnis in unterschiedlichem Format in unterschiedlichen Tabellen,
     # nämlich als JSON-String sowie in den Tabellen >values<, >stations< und >sensors<:
     normalize_and_save_values    (mem.db_in , mem.db_in_table_fstb_JSON, mem.db_out, mem.db_out_table_fstb_JSON)
     # erzeuge aus >values< Tabelle die signalisiert, an welchem Tag welche Station Messwerte geliefert hat.
@@ -1119,13 +1129,14 @@ def main():
     make_fstb_pivot(mem.db_out, mem.db_out_table_values, mem.db_out_table_fstb_pivot)
     # erzeuge aus >values< Tabelle die angibt, über welche Sensoren welche Messstation verfügt:
     insert_distinct_stations_sensors(mem.db_out, mem.db_out_table_values, mem.db_out_table_stations_sensors)
-"""
+
     p_log_this('end')
 
 
 if __name__ == "__main__":
+    # https://askubuntu.com/questions/656771/process-niceness-vs-priority
     p_utils.p_program_name_and_dir_print()
-    p_log_init(log_dir = 'log', log_fn = r'feinstaub_data_normalize_02.log')
+    p_log_init(log_dir = 'log', log_fn = r'feinstaub_data_normalize.log')
     p_log_start()
 
     # read commandline arguments:
