@@ -10,15 +10,18 @@ def make_arg_ns(origin = 'unknown !?'):
     arg_ns = argparse.Namespace()
     arg_ns.__origin__ =  str(origin)
     # optional args(ConfArgParser):
+    # defaults ...
     arg_ns.fn_data_in = None
     arg_ns.fn_data_out = None
-    arg_ns.dir = None
 
-    # args for module: >fstb_dta_to_db_mod.py<
-    arg_ns.db_JSON_dir = None
-    arg_ns.db_JSON_fn = None
+    # db_norm:
+    arg_ns.db_norm_fn = None
+    arg_ns.db_norm_dir = None
+
+    # args for module: >fstb_dta_to_db_mod.py< : db_JSON
     arg_ns.files_JSON_dir = None
-
+    arg_ns.db_JSON_fn = None
+    arg_ns.db_JSON_dir = None
 
 
     # positional args(ConfArgParser):
