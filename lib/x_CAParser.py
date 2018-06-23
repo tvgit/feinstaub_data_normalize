@@ -38,15 +38,16 @@ def x_parser(command = '', cfg_path_tmp=''):
 
     parser.add_argument('-i', r'--fn_data_in',  default=r'DataIn.dat'  , help = 'name of data input file')
     parser.add_argument('-o', r'--fn_data_out', default=r'DataOut.dat' , help = 'name of data output file')
-    parser.add_argument('-d', '--dir', default=r'\\RB3-WORK\lighttpd\feinstaublog', help = ' help dddd')
-
-    parser.add_argument('-i', '--fn_data_in',  default='DataIn.dat'  , help = 'name of data input file')
-    parser.add_argument('-o', '--fn_data_out', default='DataOut.dat' , help = 'name of data output file')
 
     # args for module: >fstb_dta_to_db_mod.py<
     parser.add_argument(      '--db_JSON_dir', default=r'.'                , help = ' Directory containing SQL-db with JSON strings')
     parser.add_argument(      '--db_JSON_fn' , default=r'feinstaub_0011.db', help = ' Filename of SQL-db with JSON strings')
     parser.add_argument(      '--files_JSON_dir', default=r'./feinstaublog', help = ' Directory with JSON data files.')
+
+    # args for module: >fstb_dta_to_db_mod.py<
+    # db_norm_fn  = r'C:\tmp\sqlite\feinstaub_0011_NORM.db'
+    parser.add_argument(      '--db_norm_dir', default=r'.'                     , help = ' Directory containing SQL-db with normalised data')
+    parser.add_argument(      '--db_norm_fn' , default=r'feinstaub_0011_NORM.db', help = ' Filename of SQL-db containing SQL-db with normalised data')
 
     global args
     # log default args
