@@ -1,5 +1,5 @@
 
-# Sharing information via this module across >feinstaub_data_normalize_02.py< and its modules
+# Sharing information via this module across >feinstaub_data_normalize.py< and its modules
 # http://stackoverflow.com/questions/13034496/using-global-variables-between-files-in-python
 #
 import argparse

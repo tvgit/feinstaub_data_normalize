@@ -7,7 +7,6 @@
 """
 Vs 02
 
-
 Dieses schöne Programm:
 liest Daten aus einer sqlite-db, 
 modifiziert sie und 
@@ -29,15 +28,14 @@ Modifizieren geschieht in: >def normalize_and_save_data(...):< und heißt:
    http://sql.lernenhoch2.de/lernen/sql-fortgeschritten/join-tabelle-zusammenfugen/
 
    nb: esp8266id == last 24 Bit of MAC address (first 24 Bit = manufacturer)
+
+2018-06-29
+ - Das modul >lib.fstb_dta_to_db_mod< (vorher eigenständiges Program: >fstb_dta_to_db.py<
+   liest Feinstaubwerte aus *.log Dateien im JSON-Format und überträgt sie in eine sql-db.
+ - Konfiguration durch >feinstaub_data_normalize.cfg<, wie das Hauptprogramm.
 """
 
 
-# TODO
-# - Zusammenführung von
-#     feinstaub_data_to_database.py    und
-#     feinstaub_data_normalize_02.py
-# - Relative Pfade in beiden Programmen
-# - eine gemeinsame cfg-Datei ...
 
 import lib.x_CAParser as x_CAParser
 import lib.ppg_utils  as p_utils
@@ -1143,7 +1141,7 @@ if __name__ == "__main__":
     x_CAParser.x_parser()
 
     # optional reading of cfg-file: (r' == raw string) 
-    # x_CAParser.x_parser('--conf-file', r'.\cfg\feinstaub_data_normalize_02.cfg')
+    # x_CAParser.x_parser('--conf-file', r'.\cfg\feinstaub_data_normalize.cfg')
 
     main()
 
@@ -1154,6 +1152,6 @@ if __name__ == "__main__":
     p_utils.p_exit()
 
     # You may use >pyinstaller.exe< to dist your program:
-    # pyinstaller.exe --onefile feinstaub_data_normalize_02.py
+    # pyinstaller.exe --onefile feinstaub_data_normalize.py
 
 # # 2017_07_27

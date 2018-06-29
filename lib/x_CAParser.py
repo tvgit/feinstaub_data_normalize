@@ -29,7 +29,7 @@ def args_to_glbls (args):
 
 def x_parser(command = '', cfg_path_tmp=''):
     # p_log_this()
-    parser = confargparse.ConfArgParser(description='Program: feinstaub_data_normalize_02.py')
+    parser = confargparse.ConfArgParser(description='Program: feinstaub_data_normalize.py')
     # exclude positional args when exporting conf-file
     # if (command <> '--export-conf-file') and (command <> 'ignore_pos_args'):
     #     pass

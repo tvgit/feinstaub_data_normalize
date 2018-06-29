@@ -19,24 +19,13 @@ import datetime
 
 
 """
-DOING:
-
--> Programm soll so in Module zerlegt werden,  dass es als
-* eigenständiges Programm laufen kann ...  oder als 
-* Modul in ein anderes importiert werden kann. 
-  In diesem Fall allerdings muss ich rausbekommen, wie die Konfigurationsparameter übergeben werden??  
-
-  See: Python: import module from another directory at the same level in project hierarchy:
-     https://stackoverflow.com/questions/20075884
-
-
-Dieses schöne Programm ...
+Dieses schöne Modul/Programm ...
 ... überträgt Zeilen aus JSON-Dateien (identischer Struktur) in eine sqlite-db.
 Dadurch wird der Zugriff auf die Daten einfacher.
 Das Programm kann lokal (zB cubie-truck) oder auf einem  Server laufen. 
 
 Alle JSON-Dateien liegen in einem einzigen Directory.
-In den JSON-Zeilen steht jeweils Zeitpunkt, Messstation, Messdaten. 
+In den JSON-Zeilen steht jeweils Zeitpunkt, Messstation, Messdaten der Feinstaub-Messgeräte. 
 
 Die Struktur der sqlite-db ist einfach (und redundant): Zeitpunkt, Mess-Station, Messdaten (als JSON), original JSON-str. 
 Redundant idem die Messdaten zweimal vorkommen: im original JSON-str und separat als Messdaten-JSON.
@@ -49,6 +38,10 @@ Einige Daten werden beim Übertragen JSON-Datei -> db leicht modifiziert:
  - Die Modifikation geschieht in: >def normalize_and_save_data(...)<
 
 nb: esp8266id == last 24 Bit of MAC address (first 24 Bit = manufacturer)
+
+  See: Python: import module from another directory at the same level in project hierarchy:
+     https://stackoverflow.com/questions/20075884
+
 
 """
 
@@ -588,3 +581,28 @@ def process_all_json_data_files(feinstaub_dir, fn_db):
         else:
             p_utils.p_terminal_mssge_error('File not found: ' + data_file_name)
 
+
+if __name__ == "__main__":
+    # 2018-06-29: ich weiss nicht, ob das Programm in dieser Form als python script (dh nicht als Modul) funktioniert.
+    p_utils.p_program_name_and_dir_print()
+    p_log_init(log_dir = 'log', log_fn = r'feinstaub_data_to_database_mod_01.log')
+    p_log_start()
+
+    # read commandline arguments:
+    x_CAParser.x_parser()
+    # optional reading of cfg-file: (r' == raw string)
+    x_CAParser.x_parser('--conf-file', r'.\cfg\feinstaub_data_to_database_mod_01.cfg')
+    # x_CAParser.x_parser('--export-conf-file', r'.\cfg\feinstaub_data_to_database_mod_01.cfg')
+
+    main()
+
+    p_log_end()
+    p_utils.p_terminal_mssge_success()
+    # p_utils.p_terminal_mssge_note_this()
+    # p_utils.p_terminal_mssge_error()
+    p_utils.p_exit()
+
+    # You may use >pyinstaller.exe< to dist your program:
+    # pyinstaller.exe --onefile feinstaub_data_to_database_mod_01.py
+
+# 2017_05_25-11_34_35
