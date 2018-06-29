@@ -5,7 +5,7 @@
 # YOUR code resides in THIS module.
 
 """
-Vs 02
+Vs 02.1
 
 Dieses schöne Programm:
 liest Daten aus einer sqlite-db, 
