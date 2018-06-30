@@ -1132,8 +1132,10 @@ def main():
 
 
 if __name__ == "__main__":
-    # If    >Cannot compile Python.h<   then
+    # If    >Cannot compile Python.h<   then do
     #       >apt-get install install clang python-dev<
+    # If when >pip install pandas<  followed by >pandas ... sas.c not found<  then try
+    #       >pip install  cython<
     # https://askubuntu.com/questions/656771/process-niceness-vs-priority
     p_utils.p_program_name_and_dir_print()
     p_log_init(log_dir = 'log', log_fn = r'feinstaub_data_normalize.log')
