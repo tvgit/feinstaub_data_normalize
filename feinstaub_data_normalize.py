@@ -1102,8 +1102,8 @@ def main():
     print msge;  p_log_this(msge)
 
     # (make_new_db = True) => Alte Datenbank wird gelöscht und neue db frisch angelegt
-    fstb_dta_to_db_mod.make_sqlite_db(fn_db = db_JSON_path, make_new_db = True)
-    #fstb_dta_to_db_mod.make_sqlite_db(fn_db = db_JSON_path, make_new_db = False)
+    # fstb_dta_to_db_mod.make_sqlite_db(fn_db = db_JSON_path, make_new_db = True)
+    fstb_dta_to_db_mod.make_sqlite_db(fn_db = db_JSON_path, make_new_db = False)
     fstb_dta_to_db_mod.process_all_json_data_files(feinstaub_dir = feinstaub_dir, fn_db = db_JSON_path)
 
     make_new_db = True
