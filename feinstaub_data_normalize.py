@@ -1014,6 +1014,7 @@ def make_fstb_pivot(db_out, db_out_table_values, fstb_pivot):
     # print sql ;  p_log_this(sql)
     conn = sqlite3.connect(db_out)
     # in ein pandas dataframe umwandeln (denn pandas kann daraus eine pivot-Tabelle machen)
+    p_log_this('df = pd.read_sql_query(sql, conn)')
     df = pd.read_sql_query(sql, conn)
 
     # pd.options.display.max_columns = 10
@@ -1024,6 +1025,7 @@ def make_fstb_pivot(db_out, db_out_table_values, fstb_pivot):
     # Do not know why, really not. But it works for me.
     # The key was: >aggfunc='first'< that solved the issue:
     #   'pandas.core.base.DataError: No numeric types to aggregate'
+    p_log_this('df = pd.pivot_table(df, ...)')
     df = pd.pivot_table(df, index=['unix_time_norm', 'datum', 'zeit', 'station_name'], columns='sensor_type', values='value', aggfunc='first')
 
     # with pd.option_context('display.max_rows', 50, 'display.width', 150):
@@ -1032,6 +1034,7 @@ def make_fstb_pivot(db_out, db_out_table_values, fstb_pivot):
     # insert data into table >fstb_pivot<:
     # Mit Hilfe von pandas das Ergebnis in einem Rutsch in eine neue Tabelle
     # (mit korrekten Spalten und Spaltennamen) abspeichern:
+    p_log_this('''df.to_sql(fstb_pivot, conn, if_exists='replace')''')
     df.to_sql(fstb_pivot, conn, if_exists='replace')
     conn.close()
     p_log_this('end')
